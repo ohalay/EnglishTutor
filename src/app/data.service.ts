@@ -1,18 +1,19 @@
+
 import { Injectable } from '@angular/core';
+
 
 @Injectable()
 export class DataService {
 
-  constructor() { 
+  constructor() {
   }
 
-  
-  getTitle():Promise<string> {
-    const name = 'test';
+  getLastWord(): Promise<string> {
+    const name = 'lastWord';
     return new Promise(resolve => {
-       chrome.storage.sync.get([name], cb=>{
+       chrome.storage.sync.get([name], cb => {
         resolve(cb[name]);
       });
-    })
+    });
   }
 }

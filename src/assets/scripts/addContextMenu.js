@@ -1,5 +1,5 @@
 function translateOnClick(e){
-    chrome.storage.sync.set({'test' : e.selectionText})
+    chrome.storage.sync.set({'lastWord' : e.selectionText})
 }
 
 chrome.contextMenus.create({
