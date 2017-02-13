@@ -9,14 +9,14 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class TranslateService {
 
-  private baseUrl = 'http://www.transltr.org/';
+  private static BASE_URL = 'http://www.transltr.org/';
 
   constructor(private http: Http, private settings: SettingsService) { }
 
   translate(text: string): Observable<string> {
     const params = `text=${text}&from=${this.settings.fromLanguage}&to=${this.settings.toLanguage}`;
 
-    return this.http.get(`${this.baseUrl}api/translate?${params}`)
+    return this.http.get(`${TranslateService.BASE_URL}api/translate?${params}`)
       .map(responce => responce.json().translationText)
       .catch(error => {
         console.log(error);
