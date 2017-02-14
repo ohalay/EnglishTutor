@@ -25,5 +25,14 @@
         "assets/css/*",
         "assets/js/*",
         "assets/fonts/*"
-    ]
+    ],
+     "content_scripts": [
+        {
+        "matches": ["http://*/*"],
+        "css": ["assets/scripts/contentscript.css"],
+        "js": ["assets/scripts/contentscript.js"],
+        "run_at": "document_end",
+        "all_frames": true
+        }
+     ]
 }
