@@ -10,9 +10,7 @@ firebase.initializeApp(config);
 
 function translateOnClick(e){
     var ref = firebase.database().ref('vocabilary');
-    ref.child(e.selectionText).set(e.selectionText);
-
-    chrome.storage.sync.set({'lastWord' : e.selectionText})
+    ref.child(e.selectionText).set({timestamp: Date.now()});
 }
 
 chrome.contextMenus.create({

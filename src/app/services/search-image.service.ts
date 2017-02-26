@@ -10,13 +10,22 @@ export class SearchImageService {
 
   constructor(private http: Http, private settings: SettingsService) { }
 
-  getImage(text:string): any {
-    const params = `q=${text}&key=${SearchImageService.API_KEY}&lang=${this.settings.fromLanguage}&per_page=${this.settings.getImgCount}`;
+  getImage(text: string): any {
+    const params = {
+      q: text,
+      key: SearchImageService.API_KEY,
+      lang: this.settings.fromLanguage,
+      per_page: this.settings.getImgCount,
+      orientation: this.settings.getImgOrientation
+    };
+    const queryParams = Object.keys(params)
+      .map(s => `${s}=${params[s]}`)
+      .join('&');
 
-    return this.http.get(`${SearchImageService.BASE_URL}api/?${params}`)
+    return this.http.get(`${SearchImageService.BASE_URL}api/?${queryParams}`)
       .map(responce => responce.json())
       .catch(error => {
-        console.log("getImage", error);
+        console.log('getImage', error);
         return error;
       });
   }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DataService } from './data.service';
-import { TranslateService } from './translate.service';
-import { SearchImageService } from './search-image.service';
+import { DataService } from './services/data.service';
+import { TranslateService } from './services/translate.service';
+import { SearchImageService } from './services/search-image.service';
 
 @Component({
   selector: 'app-root',
@@ -20,15 +20,15 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.getLastWord().then(lastWord => {
-      this.title = lastWord;
+    this.dataService.getLastWords(1).subscribe(word => {
+      this.title = word[0].name;
 
-      this.translateService.translate(lastWord)
+      this.translateService.translate(word[0].name)
         .subscribe(text => this.translatedText = text);
 
-      this.searchImageService.getImage(lastWord).
+      this.searchImageService.getImage(word[0].name).
         subscribe(item => {
-          this.imageUrls = item.hits.map(s=>s.previewURL);
+          this.imageUrls = item.hits.map(s => s.previewURL);
         });
     });
   }
