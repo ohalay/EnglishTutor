@@ -31,4 +31,4 @@ export class DataService {
         return error;
       });
   }
-}
+
