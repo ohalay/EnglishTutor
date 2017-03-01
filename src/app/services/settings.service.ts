@@ -7,12 +7,14 @@ export class SettingsService {
   private _to: string;
   private _imgCount: number;
   private _imgOrientation: string;
+  private _wordAmount:number;
 
   constructor() {
     this._from = 'en';
     this._to = 'uk';
     this._imgCount = 3;
     this._imgOrientation = 'horizontal';
+    this._wordAmount = 5;
   }
 
   get fromLanguage(): string{
@@ -23,11 +25,14 @@ export class SettingsService {
     return this._to;
   }
 
-  get getImgCount(): number {
+  get imgCount(): number {
     return this._imgCount;
   }
 
-  get getImgOrientation(): string {
+  get imgOrientation(): string {
     return this._imgOrientation;
+  }
+   get wordAmount(): number {
+    return this._wordAmount;
   }
 }

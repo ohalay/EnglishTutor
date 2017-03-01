@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '../../services/translate.service';
 
 @Component({
@@ -7,22 +7,25 @@ import { TranslateService } from '../../services/translate.service';
   styleUrls: ['./vocabilary.component.css'],
   providers: [TranslateService]
 })
-export class VocabilaryComponent implements OnInit {
+export class VocabilaryComponent {
 
-  constructor( private translateService: TranslateService) { 
+  @Input() vocabilary: Word[];
+
+  @Input() selectedWord: Word;
+  @Output() selectedWordChange = new EventEmitter<Word>();
+
+
+  constructor( private translateService: TranslateService) {
   }
 
-  @Input()
-  vocabilary: Word[]
-
-  ngOnInit() {
-  }
-
-  translate(word:string){
-     this.translateService.translate(word)
+  translate(word: Word) {
+     this.translateService.translate(word.name)
         .subscribe(text => {
-          var currentWord = this.vocabilary.find(s=>s.name === word);
-          currentWord.translation = text;
+          word.translation = text;
         });
+  }
+
+  selectWordChanged(word: Word) {
+    this.selectedWordChange.emit(word);
   }
 }

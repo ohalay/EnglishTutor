@@ -1,7 +1,5 @@
 <!--heade-->
-
-<app-vocabilary [vocabilary]="vocabilary"></app-vocabilary>
-
-<!--word details-->
+<app-vocabilary [(selectedWord)]="selectedWord" [vocabilary]="vocabilary"></app-vocabilary>
+<app-word-details [word]="selectedWord"></app-word-details>
 
 <!--fotter-->

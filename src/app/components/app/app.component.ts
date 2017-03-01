@@ -1,27 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../services/data.service';
-import { SearchImageService } from '../../services/search-image.service';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
-  providers: [SearchImageService]
+  providers: [SettingsService]
 })
 export class AppComponent implements OnInit {
   vocabilary: Word[];
+  selectedWord: Word;
 
-  constructor(private dataService: DataService, 
-    private searchImageService: SearchImageService) {
+  constructor(
+    private dataService: DataService,
+    private settings: SettingsService) {
   }
 
   ngOnInit() {
-    this.dataService.getLastWords(5).subscribe(words => {
+    this.dataService.getLastWords(this.settings.wordAmount).subscribe(words => {
       this.vocabilary = words;
-      // this.searchImageService.getImage(word[0].name).
-      //   subscribe(item => {
-      //     this.imageUrls = item.hits.map(s => s.previewURL);
-      //   });
+      this.selectedWord = words[0];
     });
   }
 }

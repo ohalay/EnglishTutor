@@ -7,12 +7,14 @@ import { AppComponent } from './components/app/app.component';
 import { DataService } from './services/data.service';
 import { SettingsService } from './services/settings.service';
 import { VocabilaryComponent } from './components/vocabilary/vocabilary.component';
+import { WordDetailsComponent } from './components/word-details/word-details.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    VocabilaryComponent
+    VocabilaryComponent,
+    WordDetailsComponent
   ],
   imports: [
     BrowserModule,

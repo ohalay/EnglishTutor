@@ -15,8 +15,8 @@ export class SearchImageService {
       q: text,
       key: SearchImageService.API_KEY,
       lang: this.settings.fromLanguage,
-      per_page: this.settings.getImgCount,
-      orientation: this.settings.getImgOrientation
+      per_page: this.settings.imgCount,
+      orientation: this.settings.imgOrientation
     };
     const queryParams = Object.keys(params)
       .map(s => `${s}=${params[s]}`)
