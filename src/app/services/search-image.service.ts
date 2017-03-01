@@ -25,7 +25,7 @@ export class SearchImageService {
     return this.http.get(`${SearchImageService.BASE_URL}api/?${queryParams}`)
       .map(responce => responce.json())
       .catch(error => {
-        console.log('getImage', error);
+        console.log('getImages', error);
         return error;
       });
   }

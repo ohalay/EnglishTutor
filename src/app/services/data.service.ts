@@ -27,9 +27,24 @@ export class DataService {
     return this.http.get(`${DataService.BASE_URL}.json?orderBy="timestamp"&limitToLast=${limitTo}`)
       .map(responce => this.toWords(responce.json()))
       .catch(error => {
-        console.log(error);
+        console.log('getVocabilary', error);
         return error;
       });
+  }
+
+  updateWord(word: Word) {
+    return this.http.patch(`${DataService.BASE_URL}/${word.name}.json`, this.createWordDetail(word))
+      .map(responce => responce.json())
+      .catch(error => {
+        console.log('set Word', error);
+        return error;
+      });
+  }
+
+  private createWordDetail(word: Word): any {
+    const info = Object.assign({}, word);
+    delete info['name'];
+    return info;
   }
 }
 

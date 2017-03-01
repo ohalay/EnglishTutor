@@ -1,12 +1,15 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '../../services/translate.service';
+import { DataService } from '../../services/data.service';
+
 
 @Component({
   selector: 'app-vocabilary',
   templateUrl: './vocabilary.component.html',
   styleUrls: ['./vocabilary.component.css'],
-  providers: [TranslateService]
+  providers: [TranslateService, DataService]
 })
+
 export class VocabilaryComponent {
 
   @Input() vocabilary: Word[];
@@ -15,18 +18,42 @@ export class VocabilaryComponent {
   @Output() selectedWordChange = new EventEmitter<Word>();
 
 
-  constructor( private translateService: TranslateService) {
+  constructor( private translateService: TranslateService,
+    private dataService: DataService) {
   }
 
-  translate(word: Word) {
-     this.translateService.translate(word.name)
-        .subscribe(text => {
-          word.translation = text;
-        });
+  translate(word: WordModel) {
+    const promise = new Promise<Word>((resolve, reject) =>{
+      if (!word.translation) {
+      this.translateService.translate(word.name)
+          .subscribe(text => {
+            word.translation = text;
+            resolve(word);
+          });
+      } else {
+        resolve(word);
+      }
+    });
+    promise.then(item => {
+      this.updateWord(item);
+      word.showTranslation = true;
+    });
+
     return false;
   }
 
-  selectWordChanged(word: Word) {
+  private updateWord(word: Word) {
+    word.translateAmount = word.translateAmount ? ++word.translateAmount : 1;
+    word.lastTranslated = Date.now();
+    this.dataService.updateWord(word)
+      .subscribe(resp => console.log(resp));
+  }
+
+  selectWordChanged(word: any) {
     this.selectedWordChange.emit(word);
   }
+}
+
+interface WordModel extends Word {
+  showTranslation: boolean;
 }

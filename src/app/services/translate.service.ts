@@ -19,7 +19,7 @@ export class TranslateService {
     return this.http.get(`${TranslateService.BASE_URL}api/translate?${params}`)
       .map(responce => responce.json().translationText)
       .catch(error => {
-        console.log(error);
+        console.log('translate', error);
         return error;
       });
   }
