@@ -8,10 +8,10 @@
         </thead>
         <tbody>
             <tr *ngFor="let item of vocabilary" (click)="selectWordChanged(item)">
-                <td>
+                <td class="firstColumn">
                     <div>{{item.name}}</div>
                     <a *ngIf="!item.translation" 
-                        href="#"
+                        href
                         (click)="translate(item)">show translation</a>
                     <div *ngIf="item.translation">{{item.translation}}</div>
                 </td>

@@ -23,6 +23,7 @@ export class VocabilaryComponent {
         .subscribe(text => {
           word.translation = text;
         });
+    return false;
   }
 
   selectWordChanged(word: Word) {
