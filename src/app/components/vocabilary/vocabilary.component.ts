@@ -1,13 +1,14 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { TranslateService } from '../../services/translate.service';
 import { DataService } from '../../services/data.service';
+import { OxfordDictionaryService } from '../../services/oxford-dictionary.service';
 
 
 @Component({
   selector: 'app-vocabilary',
   templateUrl: './vocabilary.component.html',
   styleUrls: ['./vocabilary.component.css'],
-  providers: [TranslateService, DataService]
+  providers: [TranslateService, DataService, OxfordDictionaryService]
 })
 
 export class VocabilaryComponent {
@@ -19,7 +20,8 @@ export class VocabilaryComponent {
 
 
   constructor( private translateService: TranslateService,
-    private dataService: DataService) {
+    private dataService: DataService,
+    private oxfDictionaryService: OxfordDictionaryService) {
   }
 
   translate(word: WordModel) {

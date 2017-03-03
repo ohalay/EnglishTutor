@@ -1,7 +1,7 @@
-interface Word extends Information {
+interface Word {
     name: string;
     translation: string;
-    description: string;
+    defination: string;
     sentences: string[];
     images: any[];
     timestamp: number;

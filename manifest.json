@@ -11,7 +11,8 @@
     },
     
    "permissions": [
-       "contextMenus"
+       "contextMenus",
+       "https://od-api.oxforddictionaries.com/"
    ],
    "icons" :{
        "16": "assets/icons/contex_menu_icon.png"
