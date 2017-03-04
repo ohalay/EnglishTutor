@@ -1,50 +1,79 @@
 function contextMenuOnClick(e) {
-    getWordfromVocabilary(e.selectionText, function(word) {
+    const name = e.selectionText;
+
+    getWordfromVocabilary(name).then(word => {
         if (word) {
             ++word.addAmount;
             word.lastAddedTime = Date.now();
+            return word;
         } else {
-            word = createWord();
+            return createWord(name);
         }
-        setWordToVocabilary(e.selectionText, word);
-    })
+    }).then(word => setWordToVocabilary(name, word))
+}
+function createWord(wordName) {
+    return getWordInfoOxfordDictionary(wordName)
+        .then(word => {
+            const date = Date.now();
+            word.addAmount = 1;
+            word.timestamp = date;
+            word.lastAddedTime = date;
+
+            return word;
+        })
 }
 
-function createWord() {
-    var date = Date.now();
-    return {
-        addAmount: 1,
-        timestamp: date,
-        lastAddedTime: date
+function getWordInfoOxfordDictionary(wordName) {
+    
+    const lang = 'en';
+    const url = `https://od-api.oxforddictionaries.com/api/v1/entries/${lang}/${wordName}/regions=us`
+
+    const option = {
+        method: 'GET',
+        headers: {
+            app_id: 'bcfbff17',
+            app_key: '46c10915b36aac7704fd6ec072fc64d0'
+        }
     }
+
+    return fetch(url, option)
+        .then(response => response.json())
+        .then(res => mapToVocabilaryFormat(res));
+}
+
+function mapToVocabilaryFormat(data) {
+    let odEntity = {};
+
+    const lexicalEntry = data.results[0].lexicalEntries[0];
+
+    odEntity.name = lexicalEntry.text;
+
+    const pronunciaton = lexicalEntry.pronunciations.filter(s => s.audioFile)[0]
+    if (pronunciaton) {
+        odEntity.phoneticSpelling = pronunciaton.phoneticSpelling;
+        odEntity.audioFilePath = pronunciaton.audioFile;
+    }
+
+    const sense = lexicalEntry.entries[0].senses[0];
+
+    odEntity.defination = sense.definitions[0];
+    if (sense.examples)
+        odEntity.examples = sense.examples.map(s => s.text);
+
+    return odEntity;
 }
 
 function getWordfromVocabilary(name, callback) {
-    var url = 'https://eanglish-tutor.firebaseio.com/vocabilary/' 
-        + name + '.json'
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            var resp = JSON.parse(xhr.responseText);
-            callback(resp)
-        }
-    }
-    xhr.send();
+    const url = `https://eanglish-tutor.firebaseio.com/vocabilary/${name}.json`;
+
+    return fetch(url, {method: 'GET'})
+        .then(response => response.json())
 }
 
 function setWordToVocabilary(name, word) {
-    var url = 'https://eanglish-tutor.firebaseio.com/vocabilary/'
-        + name + '.json'
-    var xhr = new XMLHttpRequest();
-    xhr.open("PATCH", url, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            var resp = JSON.parse(xhr.responseText);
-            console.log(resp)
-        }
-    }
-    xhr.send(JSON.stringify(word));
+    const url = `https://eanglish-tutor.firebaseio.com/vocabilary/${name}.json`;
+
+    return fetch(url, {method: 'PATCH', body: JSON.stringify(word)})
 }
 
 chrome.contextMenus.create({
