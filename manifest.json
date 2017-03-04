@@ -19,7 +19,6 @@
    },
    "background": { 
       "scripts": [
-          "assets/scripts/firebase.js",
           "assets/scripts/addContextMenu.js"
           ]
     },

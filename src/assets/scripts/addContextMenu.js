@@ -1,20 +1,54 @@
+function contextMenuOnClick(e) {
+    getWordfromVocabilary(e.selectionText, function(word) {
+        if (word) {
+            ++word.addAmount;
+            word.lastAddedTime = Date.now();
+        } else {
+            word = createWord();
+        }
+        setWordToVocabilary(e.selectionText, word);
+    })
+}
 
-var config = {
-    apiKey: "AIzaSyCVuhcVbj1EfrB3iP6I9LQGce8Wzlk-k8U",
-    authDomain: "eanglish-tutor.firebaseapp.com",
-    databaseURL: "https://eanglish-tutor.firebaseio.com",
-    storageBucket: "eanglish-tutor.appspot.com",
-    messagingSenderId: "456223131583"
-};
-firebase.initializeApp(config);
+function createWord() {
+    var date = Date.now();
+    return {
+        addAmount: 1,
+        timestamp: date,
+        lastAddedTime: date
+    }
+}
 
-function translateOnClick(e){
-    var ref = firebase.database().ref('vocabilary');
-    ref.child(e.selectionText).set({timestamp: Date.now()});
+function getWordfromVocabilary(name, callback) {
+    var url = 'https://eanglish-tutor.firebaseio.com/vocabilary/' 
+        + name + '.json'
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            var resp = JSON.parse(xhr.responseText);
+            callback(resp)
+        }
+    }
+    xhr.send();
+}
+
+function setWordToVocabilary(name, word) {
+    var url = 'https://eanglish-tutor.firebaseio.com/vocabilary/'
+        + name + '.json'
+    var xhr = new XMLHttpRequest();
+    xhr.open("PATCH", url, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            var resp = JSON.parse(xhr.responseText);
+            console.log(resp)
+        }
+    }
+    xhr.send(JSON.stringify(word));
 }
 
 chrome.contextMenus.create({
     'title': 'Add to vocabilary',
     'contexts': ['selection'],
-    'onclick' : translateOnClick
+    'onclick' : contextMenuOnClick
 });
