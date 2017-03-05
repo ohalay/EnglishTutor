@@ -4,7 +4,7 @@ import { SettingsService } from './settings.service';
 
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class TranslateService {
@@ -13,14 +13,11 @@ export class TranslateService {
 
   constructor(private http: Http, private settings: SettingsService) { }
 
-  translate(text: string): Observable<string> {
+  translate(text: string): Promise<string> {
     const params = `text=${text}&from=${this.settings.fromLanguage}&to=${this.settings.toLanguage}`;
 
-    return this.http.get(`${TranslateService.BASE_URL}api/translate?${params}`)
-      .map(responce => responce.json().translationText)
-      .catch(error => {
-        console.log('translate', error);
-        return error;
-      });
+    return this.http.get(`${TranslateService.BASE_URL}api/translate?${params}`).toPromise()
+      .then(responce => responce.json().translationText)
+      .catch(error => console.log('translate', error));
   }
 }

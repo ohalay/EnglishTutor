@@ -3,3 +3,6 @@
     <img src="{{url}}"/>
   </i>
 </div>
+<ul *ngIf="word">
+  <li *ngFor="let example of word.examples">{{example}}</li>
+</ul>

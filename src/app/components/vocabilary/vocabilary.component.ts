@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter,  OnChanges, SimpleChange } from '@angular/core';
 import { TranslateService } from '../../services/translate.service';
 import { DataService } from '../../services/data.service';
 
@@ -10,7 +10,7 @@ import { DataService } from '../../services/data.service';
   providers: [TranslateService, DataService]
 })
 
-export class VocabilaryComponent {
+export class VocabilaryComponent implements  OnChanges {
 
   @Input() vocabilary: Word[];
 
@@ -22,38 +22,57 @@ export class VocabilaryComponent {
     private dataService: DataService) {
   }
 
-  translate(word: WordModel) {
-    const promise = new Promise<Word>((resolve, reject) =>{
-      if (!word.translation) {
-      this.translateService.translate(word.name)
-          .subscribe(text => {
-            word.translation = text;
-            resolve(word);
-          });
-      } else {
-        resolve(word);
-      }
-    });
-    promise.then(item => {
-      this.updateWord(item);
-      word.showTranslation = true;
-    });
+  ngOnChanges(changes: {[ propName: string]: SimpleChange}){
+    if (changes['selectedWord'] && changes['selectedWord'].currentValue) {
+      (<WordModel>this.selectedWord).isSelected = true;
+    }
+  }
 
+  playAudio(word: Word) {
+    const audio = new Audio(word.audioFilePath);
+    audio.play();
+  }
+
+  translate(word: WordModel) {
+    let promise = new Promise<WordModel>((resolve, reject) => resolve(word));
+    if (!word.translation) {
+      promise = this.translateService.translate(word.name)
+        .then(text => {
+          word.translation = text;
+          return word;
+        });
+    }
+    promise.then(wordModel => {
+      this.updateWord(wordModel);
+      wordModel.showTranslation = true;
+    });
     return false;
   }
 
-  private updateWord(word: Word) {
+  private updateWord(word: WordModel) {
     word.translateAmount = word.translateAmount ? ++word.translateAmount : 1;
     word.lastTranslated = Date.now();
-    this.dataService.updateWord(word)
-      .subscribe(resp => console.log(resp));
+    this.dataService.updateWord(this.toWord(word))
+      .subscribe(resp => console.log('Updated word', resp));
   }
 
-  selectWordChanged(word: any) {
+  selectWordChanged(word: WordModel) {
+    (<WordModel>this.selectedWord).isSelected = false;
+    word.isSelected = true;
     this.selectedWordChange.emit(word);
+  }
+
+  private toWord(wordModel: WordModel): Word {
+    let word = Object.assign({}, wordModel);
+
+    delete word.isSelected;
+    delete word.showTranslation;
+
+    return word;
   }
 }
 
 interface WordModel extends Word {
   showTranslation: boolean;
+  isSelected: boolean;
 }

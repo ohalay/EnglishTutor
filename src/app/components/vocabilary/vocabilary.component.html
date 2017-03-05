@@ -3,17 +3,25 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th></th>
                 <th>Defination</th>
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let item of vocabilary" (click)="selectWordChanged(item)">
+            <tr *ngFor="let item of vocabilary" 
+                (click)="selectWordChanged(item)"
+                [class.selectedRow]="item.isSelected">
                 <td class="firstColumn">
                     <div>{{item.name}}</div>
-                    <a *ngIf="!item.showTranslation" 
+                   <a *ngIf="!item.showTranslation" 
                         href
                         (click)="translate(item)">show translation</a>
                     <div *ngIf="item.showTranslation">{{item.translation}}</div>
+                </td>
+                <td>
+                    <a class="audioIcon"
+                        (click)="playAudio(item)" 
+                        *ngIf="item.audioFilePath"></a>
                 </td>
                 <td>{{item.defination}}</td>
             </tr>
