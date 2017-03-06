@@ -21,10 +21,12 @@ export class AppComponent implements OnInit {
     this.dataService.getLastUserWords(this.settings.wordAmount).then(words => {
       this.dataService.getVocabilaryWordInfo(words.map(s => s.name))
         .then(res => {
-          console.log('res', res);
+          this.vocabilary = res.map(wordInfo => {
+            const wordStatistic = words.find(data => data.name === wordInfo.name);
+            return Object.assign(wordStatistic, wordInfo);
+          });
+          this.selectedWord = words[0];
         });
-      this.vocabilary = words;
-      this.selectedWord = words[0];
     });
   }
 }

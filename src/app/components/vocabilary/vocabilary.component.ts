@@ -52,8 +52,7 @@ export class VocabilaryComponent implements  OnChanges {
   private updateWord(word: WordModel) {
     word.translateAmount = word.translateAmount ? ++word.translateAmount : 1;
     word.lastTranslated = Date.now();
-    this.dataService.updateWord(this.toWord(word))
-      .subscribe(resp => console.log('Updated word', resp));
+    this.dataService.updateWord(this.toWord(word));
   }
 
   selectWordChanged(word: WordModel) {

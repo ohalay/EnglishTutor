@@ -17,15 +17,15 @@ export class DataService {
   constructor(private http: Http, private settings: SettingsService) {
   }
 
-  private toWords(data: any): Word[] {
+  private toWords(data: any): any {
     return Object.getOwnPropertyNames(data).map(s => {
-      const word = <Word>data[s];
+      const word = data[s];
       word.name = s;
       return word;
     });
   }
 
-  getLastUserWords(limitTo = 5): Promise<Word[]> {
+  getLastUserWords(limitTo = 5): Promise<any> {
     return this.getUserInfo().then(id => {
       return this.http.get(`${DataService.BASE_URL}/users/${id}/userVocabilary.json?orderBy="timestamp"&limitToFirst=${limitTo}`)
       .toPromise().then(responce => this.toWords(responce.json()))
@@ -39,19 +39,38 @@ export class DataService {
   getVocabilaryWordInfo(words: string[]) {
     const requests = words.map(name => {
         return this.http.get(`${DataService.BASE_URL}/vocabilary/${name}.json`)
-          .map(res => res.json());
+          .map(res => Object.assign({name}, res.json()));
     });
     return Observable.forkJoin(requests)
       .toPromise();
   }
 
   updateWord(word: Word) {
-    return this.http.patch(`${DataService.BASE_URL}/vocabilary/${word.name}.json`, this.createWordDetail(word))
+    this.updateWordInfo(word);
+    this.updateUserWordStatistic(word);
+  }
+
+  updateWordInfo(word: WordInfo) {
+    return this.http.put(`${DataService.BASE_URL}/vocabilary/${word.name}.json`, {translation: word.translation} )
       .map(responce => responce.json())
       .catch(error => {
-        console.log('set Word', error);
         return error;
       });
+  }
+
+  updateUserWordStatistic(word: WordStatistic) {
+     return this.getUserInfo().then(id => {
+      return this.http.patch(`${DataService.BASE_URL}/users/${id}/userVocabilary/${word.name}.json?`,
+        {
+            translateAmount: word.translateAmount,
+            lastTranslated: word.lastTranslated
+        })
+      .toPromise().then(responce => responce.json())
+      .catch(error => {
+        console.log('getVocabilary', error);
+        return error;
+      });
+    });
   }
 
   private getUserInfo(): Promise<string> {
@@ -60,12 +79,6 @@ export class DataService {
             resolve(info.id);
         });
     });
-}
-
-  private createWordDetail(word: Word): any {
-    const info = Object.assign({}, word);
-    delete info['name'];
-    return info;
   }
 }
 

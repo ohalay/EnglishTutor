@@ -14,7 +14,7 @@ export class OxfordDictionaryService {
 
   constructor(private http: Http, private settings: SettingsService) { }
 
-  getEntry(wordName: string): Observable<ODEntry> {
+  getEntry(wordName: string): Observable<WordInfo> {
     return this.http.get(`${OxfordDictionaryService.BASE_URL}/entries/${this.settings.fromLanguage}/${wordName}/regions=us`,
      this.getRequestOptions())
       .map(responce => this.createEntry(responce.json()))
@@ -24,8 +24,8 @@ export class OxfordDictionaryService {
       });
   }
 
-  private createEntry(data: any): ODEntry {
-    const odEntity = <ODEntry>{};
+  private createEntry(data: any): WordInfo {
+    const odEntity = <WordInfo>{};
 
     const lexicalEntry = data.results[0].lexicalEntries[0];
 
