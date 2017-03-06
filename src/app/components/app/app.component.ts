@@ -18,7 +18,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataService.getLastWords(this.settings.wordAmount).subscribe(words => {
+    this.dataService.getLastUserWords(this.settings.wordAmount).then(words => {
+      this.dataService.getVocabilaryWordInfo(words.map(s => s.name))
+        .then(res => {
+          console.log('res', res);
+        });
       this.vocabilary = words;
       this.selectedWord = words[0];
     });

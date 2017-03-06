@@ -1,25 +1,29 @@
 {
     "manifest_version": 2,
-    "name": "Eanglish Tutor",
+    "name": "English Tutor",
     "description": "Extantion for learn english",
     "version": "1.0.0",
     "author": "Oleh Halay",
 
     "browser_action": {
         "default_icon": "assets/icons/contex_menu_icon.png",
-        "default_popup": "index.html"
+        "default_popup": "index.html",
+        "default_title": "English Tutor"
     },
     
    "permissions": [
        "contextMenus",
-       "https://od-api.oxforddictionaries.com/"
+       "https://od-api.oxforddictionaries.com/",
+       "identity",
+       "identity.email"
    ],
    "icons" :{
        "16": "assets/icons/contex_menu_icon.png"
    },
    "background": { 
       "scripts": [
-          "assets/scripts/addContextMenu.js"
+          "assets/scripts/contextMenu.js",
+          "assets/scripts/userInfo.js"
           ]
     },
     "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",

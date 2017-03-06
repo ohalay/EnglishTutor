@@ -8,6 +8,7 @@ export class SettingsService {
   private _imgCount: number;
   private _imgOrientation: string;
   private _wordAmount: number;
+  private _userId: string;
 
   constructor() {
     this._from = 'en';
