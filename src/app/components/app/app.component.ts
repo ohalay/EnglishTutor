@@ -25,7 +25,7 @@ export class AppComponent implements OnInit {
             const wordStatistic = words.find(data => data.name === wordInfo.name);
             return Object.assign(wordStatistic, wordInfo);
           });
-          this.selectedWord = words[0];
+          this.selectedWord = this.vocabilary[0];
         });
     });
   }

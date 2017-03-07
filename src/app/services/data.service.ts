@@ -17,29 +17,25 @@ export class DataService {
   constructor(private http: Http, private settings: SettingsService) {
   }
 
-  private toWords(data: any): any {
-    return Object.getOwnPropertyNames(data).map(s => {
-      const word = data[s];
-      word.name = s;
-      return word;
-    });
+  private toWords(data: any): WordStatistic[] {
+    return Object.getOwnPropertyNames(data).map(name =>
+      Object.assign({name}, data[name]));
   }
 
-  getLastUserWords(limitTo = 5): Promise<any> {
+  getLastUserWords(limitTo = 5): Promise<WordStatistic[]> {
     return this.getUserInfo().then(id => {
       return this.http.get(`${DataService.BASE_URL}/users/${id}/userVocabilary.json?orderBy="timestamp"&limitToFirst=${limitTo}`)
       .toPromise().then(responce => this.toWords(responce.json()))
       .catch(error => {
         console.log('getVocabilary', error);
-        return error;
       });
     });
   }
 
-  getVocabilaryWordInfo(words: string[]) {
+  getVocabilaryWordInfo(words: string[]): Promise<WordInfo[]> {
     const requests = words.map(name => {
         return this.http.get(`${DataService.BASE_URL}/vocabilary/${name}.json`)
-          .map(res => Object.assign({name}, res.json()));
+          .map(res => <WordInfo>Object.assign({name}, res.json()));
     });
     return Observable.forkJoin(requests)
       .toPromise();
@@ -51,10 +47,11 @@ export class DataService {
   }
 
   updateWordInfo(word: WordInfo) {
-    return this.http.put(`${DataService.BASE_URL}/vocabilary/${word.name}.json`, {translation: word.translation} )
-      .map(responce => responce.json())
+    return this.http.patch(`${DataService.BASE_URL}/vocabilary/${word.name}.json`, {translation: word.translation} )
+      .toPromise()
+      .then(responce => responce.json())
       .catch(error => {
-        return error;
+        console.log('getVocabilary', error);
       });
   }
 
@@ -68,7 +65,6 @@ export class DataService {
       .toPromise().then(responce => responce.json())
       .catch(error => {
         console.log('getVocabilary', error);
-        return error;
       });
     });
   }
