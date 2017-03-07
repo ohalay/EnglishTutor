@@ -24,21 +24,24 @@ export class DataService {
 
   getLastUserWords(limitTo = 5): Promise<WordStatistic[]> {
     return this.getUserInfo().then(id => {
-      return this.http.get(`${DataService.BASE_URL}/users/${id}/userVocabilary.json?orderBy="timestamp"&limitToFirst=${limitTo}`)
+      return this.http.get(`${DataService.BASE_URL}/users/${id}/userVocabulary.json?orderBy="timestamp"&limitToFirst=${limitTo}`)
       .toPromise().then(responce => this.toWords(responce.json()))
       .catch(error => {
-        console.log('getVocabilary', error);
+        console.log('get user vocabulary', error);
       });
     });
   }
 
-  getVocabilaryWordInfo(words: string[]): Promise<WordInfo[]> {
+  getVocabularyWordInfo(words: string[]): Promise<WordInfo[]> {
     const requests = words.map(name => {
-        return this.http.get(`${DataService.BASE_URL}/vocabilary/${name}.json`)
+        return this.http.get(`${DataService.BASE_URL}/vocabulary/${name}.json`)
           .map(res => <WordInfo>Object.assign({name}, res.json()));
     });
     return Observable.forkJoin(requests)
-      .toPromise();
+      .toPromise()
+      .catch(error => {
+        console.log('get vocablury info', error);
+      });
   }
 
   updateWord(word: Word) {
@@ -47,24 +50,24 @@ export class DataService {
   }
 
   updateWordInfo(word: WordInfo) {
-    return this.http.patch(`${DataService.BASE_URL}/vocabilary/${word.name}.json`, {translation: word.translation} )
+    return this.http.patch(`${DataService.BASE_URL}/vocabulary/${word.name}.json`, {translation: word.translation} )
       .toPromise()
       .then(responce => responce.json())
       .catch(error => {
-        console.log('getVocabilary', error);
+        console.log('get vocabulary', error);
       });
   }
 
   updateUserWordStatistic(word: WordStatistic) {
      return this.getUserInfo().then(id => {
-      return this.http.patch(`${DataService.BASE_URL}/users/${id}/userVocabilary/${word.name}.json?`,
+      return this.http.patch(`${DataService.BASE_URL}/users/${id}/userVocabulary/${word.name}.json?`,
         {
             translateAmount: word.translateAmount,
             lastTranslated: word.lastTranslated
         })
       .toPromise().then(responce => responce.json())
       .catch(error => {
-        console.log('getVocabilary', error);
+        console.log('get vocabulary', error);
       });
     });
   }

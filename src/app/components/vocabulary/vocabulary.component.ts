@@ -4,15 +4,15 @@ import { DataService } from '../../services/data.service';
 
 
 @Component({
-  selector: 'app-vocabilary',
-  templateUrl: './vocabilary.component.html',
-  styleUrls: ['./vocabilary.component.css'],
+  selector: 'app-vocabulary',
+  templateUrl: './vocabulary.component.html',
+  styleUrls: ['./vocabulary.component.css'],
   providers: [TranslateService, DataService]
 })
 
-export class VocabilaryComponent implements  OnChanges {
+export class VocabularyComponent implements  OnChanges {
 
-  @Input() vocabilary: Word[];
+  @Input() vocabulary: Word[];
 
   @Input() selectedWord: Word;
   @Output() selectedWordChange = new EventEmitter<Word>();

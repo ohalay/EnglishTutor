@@ -7,13 +7,13 @@ function onInstalled(details) {
 
 function setUserInfo() {
     getChromeUserInfo().then(info => {
-        getUserInfo(info.id).then( res => {
-            if(word) return;
+        getUserInfo(info.id).then( userInfo => {
+            if(userInfo) return;
             const url = `https://eanglish-tutor.firebaseio.com/users/${info.id}.json`;
             const body = {
                 email: info.email,
                 settings: '',
-                userVocabilary: ''
+                userVocabulary: ''
             };
             fetch(url, {method: 'PATCH', body: JSON.stringify(body)})
         });
@@ -21,7 +21,7 @@ function setUserInfo() {
 }
 
 function getUserInfo(id) {
-    const url = `https://eanglish-tutor.firebaseio.com/users/${info.id}.json`;
+    const url = `https://eanglish-tutor.firebaseio.com/users/${id}.json`;
 
     return fetch(url, {method: 'GET'})
         .then(response => response.json());

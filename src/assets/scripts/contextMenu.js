@@ -1,7 +1,14 @@
 function contextMenuOnClick(e) {
-    const name = e.selectionText;
+    const wordName = e.selectionText;
+    
+    getNormalizedWordForOD(wordName).then(normalizedName => {
+       processUserWord(normalizedName);
+       processVocabularyWord(normalizedName);
+    }); 
+}
 
-    getUserWord(name).then(word =>{
+function processUserWord(wordName) {
+    getUserWord(wordName).then(word => {
         if (word) {
             ++word.addAmount;
             word.lastAddedTime = Date.now();
@@ -9,15 +16,18 @@ function contextMenuOnClick(e) {
         } else {
             return createWord();
         }
-    }).then(word => updateUserWord(name, word));
-    
-    getWordfromVocabilary(name).then(word => {
-        if (!word) {
-           getWordInfoOxfordDictionary(name)
-            .then(newWord => setWordToVocabilary(name, newWord));
-        }
-    });
+    }).then(word => updateUserWord(wordName, word));
 }
+
+function processVocabularyWord(wordName){
+    getWordFromVocabulary(wordName).then(word => {
+        if (!word) {
+            getWordFromOD(wordName)
+            .then(newWord => setWordToVocabulary(wordName, newWord));
+        }
+    }); 
+}
+
 function createWord() {
     const date = Date.now();
 
@@ -28,25 +38,44 @@ function createWord() {
     }
 }
 
-function getWordInfoOxfordDictionary(wordName) {
-    
-    const lang = 'en';
-    const url = `https://od-api.oxforddictionaries.com/api/v1/entries/${lang}/${wordName}/regions=us`
+function getODoption() {
 
-    const option = {
+    return option = {
+        url: 'https://od-api.oxforddictionaries.com/api/v1',
         method: 'GET',
         headers: {
             app_id: 'bcfbff17',
             app_key: '46c10915b36aac7704fd6ec072fc64d0'
         }
     }
-
-    return fetch(url, option)
-        .then(response => response.json())
-        .then(res => mapToVocabilaryFormat(res));
 }
 
-function mapToVocabilaryFormat(data) {
+function getNormalizedWordForOD(wordName) {
+    const lang = 'en';
+   
+    var option = getODoption();
+    option.url += `/inflections/${lang}/${wordName}`
+
+    return fetch(option.url, option)
+        .then(response => response.json())
+        .then(res => res.results[0].lexicalEntries[0].inflectionOf[0].id)
+        .catch(error => console.log('getNormalizedWordForOD', error));
+}
+
+function getWordFromOD(wordName) {
+    
+    const lang = 'en';
+   
+    var option = getODoption();
+    option.url += `/entries/${lang}/${wordName}/regions=us`
+
+    return fetch(option.url, option)
+        .then(response => response.json())
+        .then(res => mapToVocabularyFormat(res))
+        .catch(error => console.log('getWordFromOD', error));
+}
+
+function mapToVocabularyFormat(data) {
     let odEntity = {};
 
     const lexicalEntry = data.results[0].lexicalEntries[0];
@@ -68,39 +97,43 @@ function mapToVocabilaryFormat(data) {
 
 const base_url = 'https://eanglish-tutor.firebaseio.com';
 
-function getWordfromVocabilary(name) {
+function getWordFromVocabulary(name) {
     return getChromeUserInfo().then(info => {
-        const url = `${base_url}/vocabilary/${name}.json`;
+        const url = `${base_url}/vocabulary/${name}.json`;
 
         return fetch(url, {method: 'GET'})
             .then(response => response.json())
+            .catch(error => console.log('getWordFromVocabulary', error));
     })
 }
 
 function getUserWord(name) {
     return getChromeUserInfo().then(info => {
-        const url = `${base_url}/users/${info.id}/userVocabilary/${name}.json`;
+        const url = `${base_url}/users/${info.id}/userVocabulary/${name}.json`;
 
         return fetch(url, {method: 'GET'})
             .then(response => response.json())
+            .catch(error => console.log('getUserWord', error));
     })
 }
 
-function setWordToVocabilary(name, word) {
-    const url = `${base_url}/vocabilary/${name}.json`;
+function setWordToVocabulary(name, word) {
+    const url = `${base_url}/vocabulary/${name}.json`;
     fetch(url, {method: 'PATCH', body: JSON.stringify(word)})
+    .catch(error => console.log('setWordToVocabulary', error));
 }
 
 function updateUserWord(name, word) {
    
     getChromeUserInfo().then(info => {
-        const url = `${base_url}/users/${info.id}/userVocabilary/${name}.json`;
+        const url = `${base_url}/users/${info.id}/userVocabulary/${name}.json`;
         fetch(url, {method: 'PATCH', body: JSON.stringify(word)})
+        .catch(error => console.log('updateUserWord', error));
     });
 }
 
 chrome.contextMenus.create({
-    'title': 'Add to vocabilary',
+    'title': 'Add to vocabulary',
     'contexts': ['selection'],
     'onclick' : contextMenuOnClick
 });

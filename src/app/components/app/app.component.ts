@@ -9,7 +9,7 @@ import { SettingsService } from '../../services/settings.service';
   providers: [SettingsService]
 })
 export class AppComponent implements OnInit {
-  vocabilary: Word[];
+  vocabulary: Word[];
   selectedWord: Word;
 
   constructor(
@@ -19,13 +19,13 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.getLastUserWords(this.settings.wordAmount).then(words => {
-      this.dataService.getVocabilaryWordInfo(words.map(s => s.name))
+      this.dataService.getVocabularyWordInfo(words.map(s => s.name))
         .then(res => {
-          this.vocabilary = res.map(wordInfo => {
+          this.vocabulary = res.map(wordInfo => {
             const wordStatistic = words.find(data => data.name === wordInfo.name);
             return Object.assign(wordStatistic, wordInfo);
           });
-          this.selectedWord = this.vocabilary[0];
+          this.selectedWord = this.vocabulary[0];
         });
     });
   }
