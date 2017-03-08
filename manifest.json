@@ -6,7 +6,6 @@
     "author": "Oleh Halay",
 
     "browser_action": {
-        "default_icon": "assets/icons/contex_menu_icon.png",
         "default_popup": "index.html",
         "default_title": "English Tutor"
     },
@@ -18,7 +17,9 @@
        "identity.email"
    ],
    "icons" :{
-       "16": "assets/icons/contex_menu_icon.png"
+       "16": "assets/icons/vocabulary.png",
+       "48": "assets/icons/vocabulary.png",
+       "128": "assets/icons/vocabulary.png"
    },
    "background": { 
       "scripts": [

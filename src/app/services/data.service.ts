@@ -24,8 +24,10 @@ export class DataService {
 
   getLastUserWords(limitTo = 5): Promise<WordStatistic[]> {
     return this.getUserInfo().then(id => {
-      return this.http.get(`${DataService.BASE_URL}/users/${id}/userVocabulary.json?orderBy="timestamp"&limitToFirst=${limitTo}`)
-      .toPromise().then(responce => this.toWords(responce.json()))
+      return this.http.get(`${DataService.BASE_URL}/users/${id}/userVocabulary.json?orderBy="timestamp"&limitToLast=${limitTo}`)
+      .toPromise()
+      .then(responce => this.toWords(responce.json()))
+      .then(res => res.sort((a, b) => b.timestamp - a.timestamp))
       .catch(error => {
         console.log('get user vocabulary', error);
       });
@@ -74,9 +76,10 @@ export class DataService {
 
   private getUserInfo(): Promise<string> {
    return new Promise<string>((resolve, reject) => {
-        chrome.identity.getProfileUserInfo(info => {
-            resolve(info.id);
-        });
+        resolve('115787596179138188666');
+        // chrome.identity.getProfileUserInfo(info => {
+        //     resolve(info.id);
+        // });
     });
   }
 }

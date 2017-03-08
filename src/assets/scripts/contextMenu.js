@@ -54,11 +54,11 @@ function getNormalizedWordForOD(wordName) {
     const lang = 'en';
    
     var option = getODoption();
-    option.url += `/inflections/${lang}/${wordName}`
+    option.url += `/search/${lang}?q=${wordName}&prefix=false&limit=2&offset=0`
 
     return fetch(option.url, option)
         .then(response => response.json())
-        .then(res => res.results[0].lexicalEntries[0].inflectionOf[0].id)
+        .then(res => res.results[0].word)
         .catch(error => console.log('getNormalizedWordForOD', error));
 }
 
