@@ -67,7 +67,7 @@ function getWordFromOD(wordName) {
     const lang = 'en';
    
     var option = getODoption();
-    option.url += `/entries/${lang}/${wordName}/regions=us`
+    option.url += `/entries/${lang}/${wordName}`
 
     return fetch(option.url, option)
         .then(response => response.json())
@@ -109,7 +109,7 @@ function getWordFromVocabulary(name) {
 
 function getUserWord(name) {
     return getChromeUserInfo().then(info => {
-        const url = `${base_url}/users/${info.id}/userVocabulary/${name}.json`;
+        const url = `${base_url}/users/${info.id}/statistics/${name}.json`;
 
         return fetch(url, {method: 'GET'})
             .then(response => response.json())
@@ -126,7 +126,7 @@ function setWordToVocabulary(name, word) {
 function updateUserWord(name, word) {
    
     getChromeUserInfo().then(info => {
-        const url = `${base_url}/users/${info.id}/userVocabulary/${name}.json`;
+        const url = `${base_url}/users/${info.id}/statistics/${name}.json`;
         fetch(url, {method: 'PATCH', body: JSON.stringify(word)})
         .catch(error => console.log('updateUserWord', error));
     });

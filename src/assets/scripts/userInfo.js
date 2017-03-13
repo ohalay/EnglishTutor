@@ -13,7 +13,7 @@ function setUserInfo() {
             const body = {
                 email: info.email,
                 settings: '',
-                userVocabulary: ''
+                statistics: ''
             };
             fetch(url, {method: 'PATCH', body: JSON.stringify(body)})
         });
