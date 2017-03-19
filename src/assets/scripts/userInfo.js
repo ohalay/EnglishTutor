@@ -1,5 +1,5 @@
 function onInstalled(details) {
-    if (details.reason == "install") {
+    if (details.reason == 'install') {
         // todo implement for not signed user
         setUserInfo();
     }
@@ -41,6 +41,14 @@ function onSignInChanged(account, signedIn) {
         // todo implement user changed
         setUserInfo();
     }
+}
+
+function getAuthToken(){
+    return new Promise((resolve, reject) => {
+       chrome.identity.getAuthToken({ 'interactive': true }, token => {
+            resolve(token);
+        });
+    });
 }
 
 chrome.runtime.onInstalled.addListener(onInstalled);
