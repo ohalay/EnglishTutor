@@ -11,7 +11,7 @@ function processUserWord(wordName) {
     getUserWord(wordName).then(word => {
         if (word) {
             ++word.addAmount;
-            word.lastAddedTime = Date.now();
+            word.lastAdded = Date.now();
             return word;
         } else {
             return createWord();
@@ -34,7 +34,7 @@ function createWord() {
     return {
         addAmount: 1,
         timestamp: date,
-        lastAddedTime: date
+        lastAdded: date
     }
 }
 
