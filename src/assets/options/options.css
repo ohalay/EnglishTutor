@@ -1,0 +1,40 @@
+body {
+    font-size: 11pt;
+}
+
+.settings-block{
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #DDD;
+}
+
+.seetings-block-header{
+    font-size: 13pt;
+    border-bottom: 1px solid #DDD;
+}
+
+.settings-row {
+    margin: 20px 0px;
+}
+
+.settings-row .title {
+    width: 150px;
+    text-align: right;
+    display: inline-block;
+}
+
+.settings-row select {
+    width: 150px;
+    text-align: center;
+    display: inline-block;
+}
+
+.settings-button {
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 4px !important;
+    margin: 10px auto;
+    cursor: pointer;
+}

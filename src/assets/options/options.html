@@ -2,21 +2,18 @@
 <html>
 <head>
     <script src="options.js"></script>
+    <link rel="stylesheet" href="options.css">
 </head>
 
 <body>
     <div class="settings-block">
         <div class="seetings-block-header">
-
+            General options
         </div>
         <div class="settings-block-body">
             <div class="settings-row">
                 <div class="title">Native language</div>
-                <select class="settings-select" id="native-language">
-                    <option value="uk-UA">Ukrainian</option>
-                    <option value="de-DE">Germany</option>
-                    <option value="fr-FR">Franch</option>
-                </select>
+                <select class="settings-select" id="native-language"></select>
             </div>
             <div class="settings-row">
                 <div class="title">Image count</div>
@@ -28,21 +25,7 @@
             </div>
         </div>
     </div>
-    General options:
-    <select id="color">
-        <option value="red">red</option>
-        <option value="green">green</option>
-        <option value="blue">blue</option>
-        <option value="yellow">yellow</option>
-    </select>
-
-    <label>
-    <input type="checkbox" id="like">
-    I like colors.
-  </label>
-
-    <div id="status"></div>
-    <button id="save">Save</button>
+    <button class="settings-button" id="accept-changes">Accept changes</button>
 </body>
 
 </html>

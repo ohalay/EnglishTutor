@@ -1,3 +1,8 @@
+const defaultSettings = {
+    languageCode : 'uk',
+    imageCount : 3
+}
+
 function onInstalled(details) {
     if (details.reason == 'install') {
         // todo implement for not signed user
@@ -12,7 +17,7 @@ function setUserInfo() {
             const url = `https://eanglish-tutor.firebaseio.com/users/${info.id}.json`;
             const body = {
                 email: info.email,
-                settings: '',
+                settings: defaultSettings,
                 statistics: ''
             };
             fetch(url, {method: 'PATCH', body: JSON.stringify(body)})
