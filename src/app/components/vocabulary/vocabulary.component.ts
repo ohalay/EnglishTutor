@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter,  OnChanges, SimpleChange } from '@angular/core';
-import { TranslateService } from '../../services/translate.service';
 import { DataService } from '../../services/data.service';
 
 
@@ -7,7 +6,7 @@ import { DataService } from '../../services/data.service';
   selector: 'app-vocabulary',
   templateUrl: './vocabulary.component.html',
   styleUrls: ['./vocabulary.component.css'],
-  providers: [TranslateService, DataService]
+  providers: [DataService]
 })
 
 export class VocabularyComponent implements  OnChanges {
@@ -18,8 +17,7 @@ export class VocabularyComponent implements  OnChanges {
   @Output() selectedWordChange = new EventEmitter<Word>();
 
 
-  constructor( private translateService: TranslateService,
-    private dataService: DataService) {
+  constructor(private dataService: DataService) {
   }
 
   ngOnChanges(changes: {[ propName: string]: SimpleChange}){
@@ -34,40 +32,17 @@ export class VocabularyComponent implements  OnChanges {
   }
 
   translate(word: WordModel) {
-    let promise = new Promise<WordModel>((resolve, reject) => resolve(word));
-    if (!word.translation) {
-      promise = this.translateService.translate(word.name)
-        .then(text => {
-          word.translation = text;
-          return word;
-        });
-    }
-    promise.then(wordModel => {
-      this.updateWord(wordModel);
-      wordModel.showTranslation = true;
+    this.dataService.translateWord(word.name).then(res => {
+      word.translation = res;
+      word.showTranslation = true;
     });
-    return false;
-  }
-
-  private updateWord(word: WordModel) {
-    word.translateAmount = word.translateAmount ? ++word.translateAmount : 1;
-    word.lastTranslated = Date.now();
-    this.dataService.updateWord(this.toWord(word));
+    // return false;
   }
 
   selectWordChanged(word: WordModel) {
     (<WordModel>this.selectedWord).isSelected = false;
     word.isSelected = true;
     this.selectedWordChange.emit(word);
-  }
-
-  private toWord(wordModel: WordModel): Word {
-    let word = Object.assign({}, wordModel);
-
-    delete word.isSelected;
-    delete word.showTranslation;
-
-    return word;
   }
 }
 

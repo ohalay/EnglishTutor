@@ -1,8 +1,10 @@
-<div>
-  <i *ngFor="let url of imageUrls">
-    <img src="{{url}}"/>
-  </i>
+<div *ngIf="word">
+  <div>
+    <i *ngFor="let url of word.images">
+      <img src="{{url}}"/>
+    </i>
+  </div>
+  <ul>
+    <li *ngFor="let example of word.examples">{{example}}</li>
+  </ul>
 </div>
-<ul *ngIf="word">
-  <li *ngFor="let example of word.examples">{{example}}</li>
-</ul>

@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, RequestOptions, Headers, RequestOptionsArgs, Response } from '@angular/http';
 import { SettingsService } from './settings.service';
 
 import { Observable } from 'rxjs/Rx';
@@ -12,74 +12,41 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class DataService {
 
-  private static BASE_URL = 'https://eanglish-tutor.firebaseio.com';
+  private static BASE_URL = 'http://localhost:5000/api/v1';
 
   constructor(private http: Http, private settings: SettingsService) {
   }
 
-  private toWords(data: any): WordStatistic[] {
-    return Object.getOwnPropertyNames(data).map(name =>
-      Object.assign({name}, data[name]));
-  }
-
-  getLastUserWords(limitTo = 5): Promise<WordStatistic[]> {
-    return this.getUserInfo().then(id => {
-      return this.http.get(`${DataService.BASE_URL}/users/${id}/statistics.json?orderBy="timestamp"&limitToLast=${limitTo}`)
-      .toPromise()
-      .then(responce => this.toWords(responce.json()))
-      .then(res => res.sort((a, b) => b.timestamp - a.timestamp))
+  getLastWords(limitTo = 5): Promise<Word[]> {
+    return this.sendGetRequest(`vocabulary/${this.settings.toLanguage}/words?limitTo=${limitTo}`)
       .catch(error => {
         console.log('get user vocabulary', error);
       });
-    });
   }
 
-  getVocabularyWordInfo(words: string[]): Promise<WordInfo[]> {
-    const requests = words.map(name => {
-        return this.http.get(`${DataService.BASE_URL}/vocabulary/${name}.json`)
-          .map(res => <WordInfo>Object.assign({name}, res.json()));
-    });
-    return Observable.forkJoin(requests)
-      .toPromise()
+  translateWord(word): Promise<string> {
+    return this.sendGetRequest(`vocabulary/${this.settings.toLanguage}/word/${word}/translate`)
       .catch(error => {
-        console.log('get vocablury info', error);
+        console.log('get user vocabulary', error);
       });
   }
 
-  updateWord(word: Word) {
-    this.updateWordInfo(word);
-    this.updateUserWordStatistic(word);
-  }
-
-  updateWordInfo(word: WordInfo) {
-    return this.http.patch(`${DataService.BASE_URL}/vocabulary/${word.name}.json`, {translation: word.translation} )
-      .toPromise()
-      .then(responce => responce.json())
-      .catch(error => {
-        console.log('get vocabulary', error);
-      });
-  }
-
-  updateUserWordStatistic(word: WordStatistic) {
-     return this.getUserInfo().then(id => {
-      return this.http.patch(`${DataService.BASE_URL}/users/${id}/statistics/${word.name}.json?`,
-        {
-            translateAmount: word.translateAmount,
-            lastTranslated: word.lastTranslated
-        })
-      .toPromise().then(responce => responce.json())
-      .catch(error => {
-        console.log('get vocabulary', error);
-      });
+  private sendGetRequest(url) {
+    const getOption = token => new RequestOptions({
+      headers: new Headers({
+        'Authorization': `Bearer ${token}`
+      })
     });
+
+    return this.getAuthToken()
+      .then(token => this.http.get(`${DataService.BASE_URL}/${url}`, getOption(token)).toPromise())
+      .then(res => (<Response>res).json());
   }
 
-  private getUserInfo(): Promise<string> {
-   return new Promise<string>((resolve, reject) => {
-        chrome.identity.getProfileUserInfo(info => {
-            resolve(info.id);
-        });
-    });
+  private getAuthToken() {
+      return new Promise((resolve, reject) => {
+          chrome.identity.getAuthToken({ 'interactive': true }, resolve);
+      });
   }
 }
 
