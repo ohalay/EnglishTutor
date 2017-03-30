@@ -36,7 +36,7 @@ export class VocabularyComponent implements  OnChanges {
       word.translation = res;
       word.showTranslation = true;
     });
-    // return false;
+    return false;
   }
 
   selectWordChanged(word: WordModel) {

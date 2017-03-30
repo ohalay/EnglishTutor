@@ -12,7 +12,7 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class DataService {
 
-  private static BASE_URL = 'http://localhost:5000/api/v1';
+  private static BASE_URL = 'http://35.187.74.122/api/v1';
 
   constructor(private http: Http, private settings: SettingsService) {
   }
@@ -26,6 +26,7 @@ export class DataService {
 
   translateWord(word): Promise<string> {
     return this.sendGetRequest(`vocabulary/${this.settings.toLanguage}/word/${word}/translate`)
+      .then(s => s.translation)
       .catch(error => {
         console.log('get user vocabulary', error);
       });

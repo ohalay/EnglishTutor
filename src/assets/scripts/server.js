@@ -1,6 +1,6 @@
 class Server {
     constructor() {
-        this.BASE_URL = 'http://localhost:5000/api/v1';
+        this.BASE_URL = 'http://35.187.74.122/api/v1';
     }
 
     getLanguages() {
